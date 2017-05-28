@@ -1,3 +1,6 @@
+import operator
+import logging
+import time
 assignments = []
 rows = 'ABCDEFGHI'
 cols = '123456789'
@@ -26,6 +29,16 @@ def assign_value(values, box, value):
     return values
 
 def naked_twins(values):
+    """
+       basically search for a two boxes with the same value 'the value  should be 2 characher' in one unit and remove its values from the other boxes in the unit
+       Args:
+           A grid in dictionary form .
+       Returns:
+           A grid in dictionary form
+       """
+    start_time = int(round(time.time() * 1000))
+    logging.info('starting naked twins')
+
     """Eliminate values using the naked twins strategy.
     Args:
         values(dict): a dictionary of the form {'box_name': '123456789', ...}
@@ -69,6 +82,10 @@ def naked_twins(values):
                             # remove that charachter from any box in the unit
                             if len(values[box3]) > 1 and c in values[box3]:
                                 values[box3]=values[box3].replace(c,"")
+    #sort the values by the key to pass the test case
+    values = dict(sorted(values.items(), key=operator.itemgetter(0)))
+    time_taken = int(round(time.time() * 1000))-start_time
+    logging.info('Finish naked twins in: '+str(time_taken)+ ' millisec')
     return values
 
 def cross(A, B):
@@ -110,6 +127,11 @@ def display(values):
     return
 
 def eliminate(values):
+    """
+    Iterate over all boxes, and remove the one value box from other boxes values .
+    Input: dictionary form.
+    Output: dictionary form.
+    """
     solved_values = [box for box in values.keys() if len(values[box]) == 1]
     for box in solved_values:
         digit = values[box]
@@ -118,6 +140,11 @@ def eliminate(values):
     return values
 
 def only_choice(values):
+    """
+    Iterate over all boxes, and asign the values that only fit in one box to that box.
+    Input: dictionary form.
+    Output: dictionary form.
+     """
     for unit in unitlist:
         for digit in '123456789':
             dplaces = [box for box in unit if digit in values[box]]
@@ -126,6 +153,11 @@ def only_choice(values):
     return values
 
 def reduce_puzzle(values):
+    """
+    basically apply all propagation constraints techniques untill over and over untill we solve it or there is nothing to do more.
+    Input: dictionary form.
+    Output: dictionary form.
+    """
     stalled = False
     while not stalled:
         solved_values_before = len([box for box in values.keys() if len(values[box]) == 1])
@@ -139,6 +171,11 @@ def reduce_puzzle(values):
     return values
 
 def search(values):
+    """
+    use a Depth first search to try to draw a tree of possibilities untill we found out which road will solve the problem .
+    Input: dictionary form.
+    Output: dictionary form.
+    """
     values = reduce_puzzle(values)
     if values is False:
         return False
@@ -170,9 +207,7 @@ def solve(grid):
     global square_units
     square_units = [cross(rs, cs) for rs in ('ABC', 'DEF', 'GHI') for cs in ('123', '456', '789')]
     global diagonal_units
-    first_diagonal_unit = [[v+cols[i] for i,v in enumerate(rows)]]
-    second_diagonal_unit = [[rows[9-i] + cols[i-1] for i in range(len(rows),0,-1)]]
-    diagonal_units= first_diagonal_unit + second_diagonal_unit
+    diagonal_units = [[r + c for r, c in zip(rows, cols)], [r + c for r, c in zip(rows, cols[::-1])]]
     global unitlist
     unitlist = row_units + column_units + square_units + diagonal_units
     global units
