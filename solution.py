@@ -67,11 +67,8 @@ def naked_twins(values):
                     continue
                 # get the second pointer value
                 value2 = values[box2]
-                # ccontinue if it's more than 2 character
-                if len(value2) != 2:
-                    continue
                 # check naked twin condition
-                if value==value2:
+                if value==value2 and len(value2)==2:
                     #iterate over all boxes in the same unit with a third pointer
                     for box3 in unit:
                         #continue if it point to one of the naked twin pointer
@@ -82,6 +79,25 @@ def naked_twins(values):
                             # remove that charachter from any box in the unit
                             if len(values[box3]) > 1 and c in values[box3]:
                                 values[box3]=values[box3].replace(c,"")
+                # check hidden twin
+                elif value in value2 and len(value2) > 2:
+                    # create flag to detect hidden twin
+                    hidden_twin = True
+                    for box3 in unit:
+                        if not hidden_twin:
+                            break
+                        # continue if it point to one of the naked twin pointer
+                        if box3 == box2 or box3 == box :
+                            continue
+                        # iterate over each charachter in naked twin value
+                        for c in value:
+                            # remove that character from any box in the unit
+                            if c in values[box3]:
+                                hidden_twin = False
+                                break
+                    if hidden_twin:
+                        values[box2] = value
+
     #sort the values by the key to pass the test case
     values = dict(sorted(values.items(), key=operator.itemgetter(0)))
     time_taken = int(round(time.time() * 1000))-start_time
