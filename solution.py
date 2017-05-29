@@ -41,15 +41,6 @@ def naked_twins(values):
        """
     start_time = int(round(time.time() * 1000))
     logging.info('starting naked twins')
-
-    """Eliminate values using the naked twins strategy.
-    Args:
-        values(dict): a dictionary of the form {'box_name': '123456789', ...}
-
-    Returns:
-        the values dictionary with the naked twins eliminated from peers.
-    """
-
     # Find all instances of naked twins
     # Eliminate the naked twins as possibilities for their peers
     if values is False:
